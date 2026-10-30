@@ -4,8 +4,8 @@
 
 #define GDT_ENTRIES 6
 
-static struct gdt_entry gdt[GDT_ENTRIES];
-static struct gdt_ptr   gp;
+struct gdt_entry gdt[GDT_ENTRIES];
+ struct gdt_ptr   gp;
 
 extern void gdt_flush(uint32_t);   // definido em gdt_flush.S (ou inline asm abaixo)
 extern void tss_flush(void);
