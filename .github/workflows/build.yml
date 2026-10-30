@@ -45,11 +45,11 @@ jobs:
         working-directory: kernel
         run: |
           timeout 15s qemu-system-i386 \
-            -cdrom kernel.iso \
-            -nographic \
-            -serial mon:stdio \
-            -no-reboot \
-            > serial.log 2>&1 || true
+          -cdrom kernel.iso \
+          -display curses \
+            -serial file:serial.log \
+              -no-reboot || true
+          cat serial.log
 
           echo "----- Saída serial -----"
           cat serial.log
