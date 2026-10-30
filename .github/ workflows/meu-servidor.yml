@@ -1,0 +1,20 @@
+name: Executar Meu Script
+
+# Define o que vai disparar o "servidor" (ex: toda vez que der um 'push' no código)
+on: [push]
+
+jobs:
+  configuracao-do-servidor:
+    # Escolhe o sistema operacional do servidor virtual gratuito do GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Copia o código do seu repositório para dentro desse servidor virtual
+      - name: Baixando o código do repositório
+        uses: actions/checkout@v4
+
+      # 2. Executa um comando direto no terminal do servidor
+      - name: Rodando comandos no terminal
+        run: |
+          echo "O servidor virtual foi iniciado com sucesso!"
+          node --version # Exemplo se você quiser checar a versão do Node instalada
