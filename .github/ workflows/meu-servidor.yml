@@ -1,20 +1,37 @@
-name: Executar Meu Script
+name: Instalar Dependencias e Compilar
 
-# Define o que vai disparar o "servidor" (ex: toda vez que der um 'push' no código)
-on: [push]
+# O "servidor" vai rodar automaticamente a cada push na branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  configuracao-do-servidor:
-    # Escolhe o sistema operacional do servidor virtual gratuito do GitHub
+  build:
+    # Define o sistema operacional da máquina virtual
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Copia o código do seu repositório para dentro desse servidor virtual
-      - name: Baixando o código do repositório
-        uses: actions/checkout@v4
+    # 1. Copia o código do seu repositório para dentro da máquina virtual
+    - name: Checkout do código
+      uses: actions/checkout@v4
 
-      # 2. Executa um comando direto no terminal do servidor
-      - name: Rodando comandos no terminal
-        run: |
-          echo "O servidor virtual foi iniciado com sucesso!"
-          node --version # Exemplo se você quiser checar a versão do Node instalada
+    # 2. Roda os seus comandos de instalação (o sudo já vem liberado)
+    - name: Instalar dependencias do sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          nasm \
+          qemu-system-x86 \
+          grub-pc-bin \
+          grub-common \
+          xorriso \
+          mtools
+
+    # 3. Exemplo de como compilar ou testar o seu código após a instalação
+    - name: Compilar o projeto (Exemplo)
+      run: |
+        echo "Adicione aqui os comandos para rodar o NASM ou o Make"
+        # Exemplo: make ou nasm -f elf32 kernel.asm -o kernel.o
