@@ -71,3 +71,22 @@ void idt_init(void) {
 
     __asm__ volatile ("lidt (%0)" : : "r"(&idtp));
 }
+
+// declarado em kernel.c
+extern void serial_print(const char *s);
+extern void serial_print_hex(uint32_t v);
+
+void isr_handler_c(uint32_t int_no, uint32_t err_code) {
+    serial_print("\n[EXCECAO] int=");
+    serial_print_hex(int_no);
+    serial_print(" err=");
+    serial_print_hex(err_code);
+    serial_print("\n");
+
+    if (int_no == 14) serial_print("  -> Page Fault\n");
+    if (int_no == 13) serial_print("  -> General Protection Fault\n");
+    if (int_no == 8)  serial_print("  -> Double Fault\n");
+    if (int_no == 6)  serial_print("  -> Invalid Opcode\n");
+
+    while (1) __asm__ volatile ("hlt");
+}
