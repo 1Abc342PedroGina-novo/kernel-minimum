@@ -54,20 +54,20 @@ ISR_ERR   30
 ISR_NOERR 31
 
 isr_common:
-    pusha                 ; salva eax, ecx, edx, ebx, esp, ebp, esi, edi
+    pusha
     mov ax, ds
-    push eax              ; salva segmentos
-    mov ax, 0x10          ; kernel data
+    push eax
+    mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
 
-    push esp              ; 3º arg: ponteiro pra struct de registradores
-    push dword [esp + 12] ; 2º arg: err_code
-    push dword [esp + 12] ; 1º arg: int_no
+    ; args: (int_no, err_code) — ambos já empilhados
+    push dword [esp + 16]   ; err_code  (posição após pusha+push eax)
+    push dword [esp + 16]   ; int_no
     call isr_handler_c
-    add esp, 12
+    add esp, 8
 
     pop eax
     mov ds, ax
@@ -75,5 +75,5 @@ isr_common:
     mov fs, ax
     mov gs, ax
     popa
-    add esp, 8            ; descarta int_no e err_code
+    add esp, 8
     iret
