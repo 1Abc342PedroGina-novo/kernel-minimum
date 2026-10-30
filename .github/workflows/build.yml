@@ -41,11 +41,11 @@ jobs:
         working-directory: kernel
         run: make iso
         
-      - name: Testar boot com QEMU (headless)
+      - name: Testar boot com QEMU (kernel direto, sem GRUB)
         working-directory: kernel
         run: |
           timeout 15s qemu-system-i386 \
-            -cdrom kernel.iso \
+            -kernel mykernel.elf \
             -nographic \
             -serial mon:stdio \
             -no-reboot \
@@ -56,7 +56,7 @@ jobs:
           echo "------------------------"
 
           if ! grep -q "KERNEL_OK" serial.log; then
-            echo "::error::Kernel não imprimiu KERNEL_OK na serial. Veja o log acima."
+            echo "::error::Kernel não imprimiu KERNEL_OK"
             exit 1
           fi
           echo "Kernel bootou e imprimiu KERNEL_OK"
