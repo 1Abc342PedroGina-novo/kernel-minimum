@@ -35,7 +35,7 @@ mykernel.elf: $(OBJS) link.ld
 iso: mykernel.elf
 	mkdir -p iso/boot/grub
 	cp mykernel.elf iso/boot/
-	printf 'set timeout=0\nset default=0\nmenuentry "kernel" {\n  multiboot /boot/mykernel.elf\n  boot\n}\n' > iso/boot/grub/grub.cfg
+	printf 'serial --unit=0 --speed=38400\nterminal_output serial console\nset timeout=0\nset default=0\nmenuentry "kernel" {\n  multiboot /boot/mykernel.elf\n  boot\n}\n' > iso/boot/grub/grub.cfg
 	grub-mkrescue -o kernel.iso iso
 
 run: iso
