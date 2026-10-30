@@ -41,7 +41,7 @@ jobs:
         working-directory: kernel
         run: make iso
 
-              - name: Diagnóstico do ELF
+      - name: Diagnóstico do ELF
         working-directory: kernel
         run: |
           echo "=== readelf -h (entry point, tipo) ==="
