@@ -40,16 +40,16 @@ jobs:
       - name: Gerar ISO bootável
         working-directory: kernel
         run: make iso
-
+        
       - name: Testar boot com QEMU (headless)
         working-directory: kernel
         run: |
           timeout 15s qemu-system-i386 \
-          -cdrom kernel.iso \
-          -display curses \
-            -serial file:serial.log \
-              -no-reboot || true
-          cat serial.log
+            -cdrom kernel.iso \
+            -nographic \
+            -serial mon:stdio \
+            -no-reboot \
+            > serial.log 2>&1 || true
 
           echo "----- Saída serial -----"
           cat serial.log
