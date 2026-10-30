@@ -1,0 +1,38 @@
+name: Instalar Dependencias e Compilar
+
+# O "servidor" vai rodar automaticamente a cada push na branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # Define o sistema operacional da máquina virtual
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Copia o código do seu repositório para dentro da máquina virtual
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # 2. Roda os seus comandos de instalação (o sudo já vem liberado)
+    - name: Instalar dependencias do sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          nasm \
+          qemu-system-x86 \
+          grub-pc-bin \
+          grub-common \
+          xorriso \
+          mtools
+
+    # 3. Exemplo de como compilar ou testar o seu código após a instalação
+    - name: Compilar o projeto (Exemplo)
+      run: |
+          cd kernel
+          make
+          make run
