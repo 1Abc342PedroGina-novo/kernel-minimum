@@ -37,12 +37,12 @@ static void serial_init(void) {
     outb(COM1 + 4, 0x0B); // IRQs + RTS/DSR
 }
 
-static void serial_putchar(char c) {
+void serial_putchar(char c) {
     while (!(inb(COM1 + 5) & 0x20)) { } // espera THR vazio
     outb(COM1, (unsigned char)c);
 }
 
-static void serial_print(const char *s) {
+ void serial_print(const char *s) {
     while (*s) serial_putchar(*s++);
 }
 
