@@ -63,9 +63,11 @@ isr_common:
     mov fs, ax
     mov gs, ax
 
-    ; args: (int_no, err_code) — ambos já empilhados
-    push dword [esp + 16]   ; err_code  (posição após pusha+push eax)
-    push dword [esp + 16]   ; int_no
+    ; stack agora: [esp]=eax_seg, [esp+36]=int_no, [esp+40]=err_code
+    mov eax, [esp + 40]     ; err_code
+    mov ebx, [esp + 36]     ; int_no
+    push eax                ; 2º arg
+    push ebx                ; 1º arg
     call isr_handler_c
     add esp, 8
 
@@ -75,5 +77,5 @@ isr_common:
     mov fs, ax
     mov gs, ax
     popa
-    add esp, 8
+    add esp, 8              ; descarta int_no e err_code
     iret
