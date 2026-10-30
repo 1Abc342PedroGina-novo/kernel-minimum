@@ -33,5 +33,6 @@ jobs:
     # 3. Exemplo de como compilar ou testar o seu código após a instalação
     - name: Compilar o projeto (Exemplo)
       run: |
-        echo "Adicione aqui os comandos para rodar o NASM ou o Make"
-        # Exemplo: make ou nasm -f elf32 kernel.asm -o kernel.o
+          cd kernel
+          make
+          make run
