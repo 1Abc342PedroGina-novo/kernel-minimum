@@ -1,29 +1,41 @@
-/* link.ld */
+/* link.ld - kernel Multiboot i386 */
+OUTPUT_FORMAT(elf32-i386)
+OUTPUT_ARCH(i386)
 ENTRY(_start)
 
 SECTIONS
 {
-    . = 1M;                 /* carrega em 1 MiB */
+    /* GRUB carrega o kernel em 1 MiB */
+    . = 1M;
 
-    .text BLOCK(4K) : ALIGN(4K)
+    /* Header Multiboot PRECISA estar nos primeiros 8 KiB
+       e alinhado em 4 bytes. KEEP evita que o linker descarte. */
+    .multiboot : ALIGN(4)
     {
-        *(.multiboot)
+        KEEP(*(.multiboot))
+    }
+
+    .text : ALIGN(4K)
+    {
         *(.text)
     }
 
-    .rodata BLOCK(4K) : ALIGN(4K)
+    .rodata : ALIGN(4K)
     {
         *(.rodata)
     }
 
-    .data BLOCK(4K) : ALIGN(4K)
+    .data : ALIGN(4K)
     {
         *(.data)
     }
 
-    .bss BLOCK(4K) : ALIGN(4K)
+    /* Símbolos para o boot.S zerar .bss (se ele usar) */
+    __bss_start = .;
+    .bss : ALIGN(4K)
     {
         *(COMMON)
         *(.bss)
     }
+    __bss_end = .;
 }
