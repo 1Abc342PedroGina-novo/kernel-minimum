@@ -2,6 +2,12 @@
 #define VGA_WIDTH  80
 #define VGA_HEIGHT 25
 #define VGA_MEMORY ((volatile unsigned short*)0xB8000)
+#include "gdt.h"
+#include "idt.h"
+#include "tss.h"
+
+// stack do kernel para o TSS — 16KB
+static unsigned char kernel_stack[16384] __attribute__((aligned(16)));
 
 #define COM1 0x3F8
 
@@ -83,14 +89,18 @@ void kmain(unsigned int magic, unsigned int *mbinfo) {
     (void)mbinfo;
 
     serial_init();
-    clear_screen();
 
+    gdt_init();
+    tss_init((uint32_t)(kernel_stack + sizeof(kernel_stack)));
+    idt_init();
+
+    clear_screen();
     print("=== Kernel Minimo de Teste ===\n");
     print("Boot via Multiboot OK!\n");
-    print("Se voce esta lendo isso, o kernel rodou.\n");
-    print("KERNEL_OK\n");   // marcador estável pro CI
+    print("GDT carregada.\n");
+    print("TSS carregado.\n");
+    print("IDT carregada (32 excecoes).\n");
+    print("KERNEL_OK\n");
 
-    while (1) {
-        __asm__ volatile ("hlt");
-    }
+    while (1) __asm__ volatile ("hlt");
 }
