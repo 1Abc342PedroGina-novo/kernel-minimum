@@ -40,7 +40,29 @@ jobs:
       - name: Gerar ISO bootável
         working-directory: kernel
         run: make iso
-        
+
+              - name: Diagnóstico do ELF
+        working-directory: kernel
+        run: |
+          echo "=== readelf -h (entry point, tipo) ==="
+          readelf -h mykernel.elf
+
+          echo ""
+          echo "=== Seções do ELF (onde está .multiboot) ==="
+          readelf -S mykernel.elf
+
+          echo ""
+          echo "=== Símbolo _start ==="
+          readelf -s mykernel.elf | grep -i start
+
+          echo ""
+          echo "=== Procurar magic Multiboot no ELF (0x1BADB002) ==="
+          xxd mykernel.elf | grep -i "02 b0 ad 1b" || echo "MAGIC NÃO ENCONTRADO NOS PRIMEIROS BYTES"
+
+          echo ""
+          echo "=== Primeiros 256 bytes do ELF ==="
+          xxd mykernel.elf | head -16
+          
       - name: Testar boot com QEMU (kernel direto, sem GRUB)
         working-directory: kernel
         run: |
