@@ -8,8 +8,8 @@ OBJS = boot.o kernel.o
 
 all: mykernel.elf
 
-boot.o: boot.asm
-	$(AS) -f elf32 boot.asm -o boot.o
+boot.o: boot.S
+	$(AS) -f elf32 boot.S -o boot.o
 
 kernel.o: kernel.c
 	$(CC) $(CFLAGS) -c kernel.c -o kernel.o
