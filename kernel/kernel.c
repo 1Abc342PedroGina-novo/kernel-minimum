@@ -15,6 +15,18 @@ static unsigned int cursor_x = 0;
 static unsigned int cursor_y = 0;
 static unsigned char color = 0x0F;
 
+void serial_print_hex(uint32_t v) {
+    char buf[11];
+    buf[0] = '0'; buf[1] = 'x';
+    for (int i = 9; i >= 2; i--) {
+        int d = v & 0xF;
+        buf[i] = d < 10 ? '0' + d : 'a' + (d - 10);
+        v >>= 4;
+    }
+    buf[10] = '\0';
+    serial_print(buf);
+}
+
 /* ---------- I/O de portas ---------- */
 static inline void outb(unsigned short port, unsigned char val) {
     __asm__ volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
