@@ -63,11 +63,11 @@ jobs:
           echo "=== Primeiros 256 bytes do ELF ==="
           xxd mykernel.elf | head -16
           
-      - name: Testar boot com QEMU (kernel direto, sem GRUB)
+      - name: Testar boot com QEMU (headless)
         working-directory: kernel
         run: |
           timeout 15s qemu-system-i386 \
-            -kernel mykernel.elf \
+            -cdrom kernel.iso \
             -nographic \
             -serial mon:stdio \
             -no-reboot \
@@ -78,11 +78,11 @@ jobs:
           echo "------------------------"
 
           if ! grep -q "KERNEL_OK" serial.log; then
-            echo "::error::Kernel não imprimiu KERNEL_OK"
+            echo "::error::Kernel não imprimiu KERNEL_OK na serial. Veja o log acima."
             exit 1
           fi
           echo "Kernel bootou e imprimiu KERNEL_OK"
-
+          
       - name: Upload da ISO como artifact
         uses: actions/upload-artifact@v4
         with:
