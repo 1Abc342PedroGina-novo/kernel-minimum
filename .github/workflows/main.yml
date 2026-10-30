@@ -1,6 +1,5 @@
-name: Instalar Dependencias e Compilar
+name: Compilar Sistema Operacional
 
-# O "servidor" vai rodar automaticamente a cada push na branch main
 on:
   push:
     branches: [ "main" ]
@@ -9,15 +8,13 @@ on:
 
 jobs:
   build:
-    # Define o sistema operacional da máquina virtual
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Copia o código do seu repositório para dentro da máquina virtual
-    - name: Checkout do código
+    - name: Checkout do codigo
       uses: actions/checkout@v4
 
-    # 2. Roda os seus comandos de instalação (o sudo já vem liberado)
+    # Instala as ferramentas necessárias (exatamente as que seu Makefile usa)
     - name: Instalar dependencias do sistema
       run: |
         sudo apt-get update
@@ -30,9 +27,4 @@ jobs:
           xorriso \
           mtools
 
-    # 3. Exemplo de como compilar ou testar o seu código após a instalação
-    - name: Compilar o projeto (Exemplo)
-      run: |
-          cd kernel
-          make
-          make run
+ 
