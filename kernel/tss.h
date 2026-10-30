@@ -2,7 +2,7 @@
 #ifndef TSS_H
 #define TSS_H
 
-#include <definitions/gdt.h>
+#include "gdt.h"
 
 struct tss_entry {
     uint32_t prev_tss;
