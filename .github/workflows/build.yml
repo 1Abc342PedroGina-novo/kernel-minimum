@@ -1,0 +1,78 @@
+name: Build kernel
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias do sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            gcc-multilib \
+            nasm \
+            grub-pc-bin \
+            grub-common \
+            grub-efi-amd64-bin \
+            xorriso \
+            mtools \
+            qemu-system-x86
+
+      - name: Compilar kernel (ELF)
+        working-directory: kernel
+        run: make
+
+      - name: Gerar ISO bootável
+        working-directory: kernel
+        run: make iso
+
+      - name: Testar boot com QEMU (headless)
+        working-directory: kernel
+        run: |
+          timeout 15s qemu-system-i386 \
+            -cdrom kernel.iso \
+            -nographic \
+            -serial mon:stdio \
+            -no-reboot \
+            > serial.log 2>&1 || true
+
+          echo "----- Saída serial -----"
+          cat serial.log
+          echo "------------------------"
+
+          if ! grep -q "KERNEL_OK" serial.log; then
+            echo "::error::Kernel não imprimiu KERNEL_OK na serial. Veja o log acima."
+            exit 1
+          fi
+          echo "Kernel bootou e imprimiu KERNEL_OK"
+
+      - name: Upload da ISO como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-iso
+          path: kernel/kernel.iso
+          retention-days: 7
+
+      - name: Upload do log serial (útil em falhas)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serial-log
+          path: kernel/serial.log
+          retention-days: 7
+          if-no-files-found: ignore
